@@ -63,16 +63,22 @@ function statement(invoice, plays) {
     return result;
   }
 
-  let result = `청구 내역 (고객명: ${invoice.customer})\n`;
+  function renderPlainText(invoice) {
+    let result = `청구 내역 (고객명: ${invoice.customer})\n`;
 
-  for (let performance of invoice.performances) {
-    const thisAmount = amountFor(performance);
-    const play = playFor(performance);
+    for (let performance of invoice.performances) {
+      const thisAmount = amountFor(performance);
+      const play = playFor(performance);
 
-    result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience}석)\n`;
+      result += ` ${play.name}: ${usd(thisAmount)} (${
+        performance.audience
+      }석)\n`;
+    }
+
+    result += `총액 ${usd(totalAmount())}\n`;
+    result += `적립 포인트: ${totalVolumeCredits()}점\n`;
+    return result;
   }
 
-  result += `총액 ${usd(totalAmount())}\n`;
-  result += `적립 포인트: ${totalVolumeCredits()}점\n`;
-  return result;
+  return renderPlainText(invoice);
 }
