@@ -8,7 +8,12 @@ function statement(invoice, plays) {
     minimumFractionDigits: 2,
   }).format;
 
-  function amountFor(performance, play) {
+  function playFor(performance) {
+    return plays[performance.playId];
+  }
+
+  function amountFor(performance) {
+    const play = playFor(performance);
     let result = 0;
 
     switch (play.type) {
@@ -33,8 +38,8 @@ function statement(invoice, plays) {
   }
 
   for (let performance of invoice.performances) {
-    const play = plays[performance.playId];
-    let thisAmount = amountFor(performance, play);
+    let thisAmount = amountFor(performance);
+    const play = playFor(performance);
 
     volumeCredits += Math.max(performance.audience - 30, 0);
 
