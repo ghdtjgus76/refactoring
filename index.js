@@ -1,4 +1,12 @@
 function statement(invoice, plays) {
+  const statementData = {};
+  statementData.customer = invoice.customer;
+  statementData.performances = invoice.performances.map(enrichPerformance);
+  statementData.totalAmount = totalAmount(statementData);
+  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+
+  return renderPlainText(statementData);
+
   function playFor(performance) {
     return plays[performance.playId];
   }
@@ -46,31 +54,27 @@ function statement(invoice, plays) {
     }).format(number / 100);
   }
 
-  function totalVolumeCredits() {
-    let result = 0;
-    for (let performance of invoice.performances) {
-      result += volumeCreditsFor(performance);
-    }
+  function totalVolumeCredits(data) {
+    return data.performance.reduce((total, p) => total + p.volumeCredits, 0);
+  }
+
+  function totalAmount(data) {
+    return data.performances.reduce((total, p) => total + p.amount, 0);
+  }
+
+  function enrichPerformance(performance) {
+    const result = Object.assign({}, performance);
+    result.play = playFor(result);
+    result.amount = amountFor(result);
+    result.volumeCredits = volumeCreditsFor(result);
     return result;
   }
 
-  function totalAmount() {
-    let result = 0;
-    for (let performance of invoice.performances) {
-      const thisAmount = amountFor(performance);
-      result += thisAmount;
-    }
-    return result;
-  }
+  function renderPlainText(data) {
+    let result = `청구 내역 (고객명: ${data.customer})\n`;
 
-  function renderPlainText(invoice) {
-    let result = `청구 내역 (고객명: ${invoice.customer})\n`;
-
-    for (let performance of invoice.performances) {
-      const thisAmount = amountFor(performance);
-      const play = playFor(performance);
-
-      result += ` ${play.name}: ${usd(thisAmount)} (${
+    for (let performance of data.performances) {
+      result += ` ${performance.play.name}: ${usd(performance.amount)} (${
         performance.audience
       }석)\n`;
     }
@@ -79,6 +83,4 @@ function statement(invoice, plays) {
     result += `적립 포인트: ${totalVolumeCredits()}점\n`;
     return result;
   }
-
-  return renderPlainText(invoice);
 }
