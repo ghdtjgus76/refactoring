@@ -5,27 +5,7 @@ class PerformanceCalculator {
   }
 
   get amount() {
-    let result = 0;
-
-    switch (this.play.type) {
-      case "tragedy":
-        result = 40000;
-        if (this.performance.audience > 30) {
-          result += 1000 * (this.performance.audience - 30);
-        }
-        break;
-      case "comedy":
-        result = 30000;
-        if (this.performance.audience > 20) {
-          result += 10000 + 500 * (this.performance.audience - 20);
-        }
-        result += 300 * this.performance.audience;
-        break;
-      default:
-        throw new Error(`알 수 없는 장르: ${this.play.type}`);
-    }
-
-    return result;
+    throw new Error(`알 수 없는 장르: ${this.play.type}`);
   }
 
   get volumeCredits() {
@@ -35,6 +15,27 @@ class PerformanceCalculator {
       result += Math.floor(this.performance.audience / 5);
     }
 
+    return result;
+  }
+}
+
+class TragedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 40000;
+    if (this.performance.audience > 30) {
+      result += 1000 * (this.performance.audience - 30);
+    }
+    return result;
+  }
+}
+
+class ComedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 30000;
+    if (this.performance.audience > 20) {
+      result += 10000 + 500 * (this.performance.audience - 20);
+    }
+    result += 300 * this.performance.audience;
     return result;
   }
 }
@@ -51,8 +52,22 @@ function statement(invoice, plays) {
 
     return result;
 
+    function createPerformanceCalculator(performance, play) {
+      switch (play.type) {
+        case "tragedy": {
+          return new TragedyCalculator(performance, play);
+        }
+        case "comedy": {
+          return new ComedyCalculator(performance, play);
+        }
+        default: {
+          throw new Error(`알 수 없는 장르: ${play.type}`);
+        }
+      }
+    }
+
     function enrichPerformance(performance) {
-      const calculator = new PerformanceCalculator(
+      const calculator = createPerformanceCalculator(
         performance,
         playFor(performance)
       );
