@@ -37,15 +37,20 @@ function statement(invoice, plays) {
     return result;
   }
 
-  for (let performance of invoice.performances) {
-    let thisAmount = amountFor(performance);
+  function volumeCreditsFor(performance) {
+    let result = 0;
     const play = playFor(performance);
-
-    volumeCredits += Math.max(performance.audience - 30, 0);
-
+    result += Math.max(performance.audience - 30, 0);
     if (play.type === "comedy") {
-      volumeCredits += Math.floor(performance.audience / 5);
+      result += Math.floor(performance.audience / 5);
     }
+    return result;
+  }
+
+  for (let performance of invoice.performances) {
+    const thisAmount = amountFor(performance);
+    const play = playFor(performance);
+    volumeCredits += volumeCreditsFor(performance);
 
     result += ` ${play.name}: ${format(thisAmount / 100)} (${
       performance.audience
