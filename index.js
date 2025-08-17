@@ -47,7 +47,7 @@ function statement(invoice, plays) {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 2,
-    }).format(number);
+    }).format(number / 100);
   }
 
   for (let performance of invoice.performances) {
@@ -55,13 +55,11 @@ function statement(invoice, plays) {
     const play = playFor(performance);
     volumeCredits += volumeCreditsFor(performance);
 
-    result += ` ${play.name}: ${usd(thisAmount / 100)} (${
-      performance.audience
-    }석)\n`;
+    result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience}석)\n`;
     totalAmount += thisAmount;
   }
 
-  result += `총액 ${usd(totalAmount / 100)}\n`;
+  result += `총액 ${usd(totalAmount)}\n`;
   result += `적립 포인트: ${volumeCredits}점\n`;
   return result;
 }
