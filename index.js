@@ -80,16 +80,6 @@ function statement(invoice, plays) {
       return plays[performance.playId];
     }
 
-    function volumeCreditsFor(performance) {
-      let result = 0;
-      const play = playFor(performance);
-      result += Math.max(performance.audience - 30, 0);
-      if (play.type === "comedy") {
-        result += Math.floor(performance.audience / 5);
-      }
-      return result;
-    }
-
     function totalVolumeCredits(data) {
       return data.performance.reduce((total, p) => total + p.volumeCredits, 0);
     }
