@@ -1,6 +1,4 @@
 function statement(invoice, plays) {
-  let result = `청구 내역 (고객명: ${invoice.customer})\n`;
-
   function playFor(performance) {
     return plays[performance.playId];
   }
@@ -64,6 +62,8 @@ function statement(invoice, plays) {
     }
     return result;
   }
+
+  let result = `청구 내역 (고객명: ${invoice.customer})\n`;
 
   for (let performance of invoice.performances) {
     const thisAmount = amountFor(performance);
