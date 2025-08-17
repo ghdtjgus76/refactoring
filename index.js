@@ -1,6 +1,4 @@
 function statement(invoice, plays) {
-  let totalAmount = 0;
-
   let result = `청구 내역 (고객명: ${invoice.customer})\n`;
 
   function playFor(performance) {
@@ -58,15 +56,23 @@ function statement(invoice, plays) {
     return volumeCredits;
   }
 
+  function totalAmount() {
+    let result = 0;
+    for (let performance of invoice.performances) {
+      const thisAmount = amountFor(performance);
+      result += thisAmount;
+    }
+    return result;
+  }
+
   for (let performance of invoice.performances) {
     const thisAmount = amountFor(performance);
     const play = playFor(performance);
 
     result += ` ${play.name}: ${usd(thisAmount)} (${performance.audience}석)\n`;
-    totalAmount += thisAmount;
   }
 
-  result += `총액 ${usd(totalAmount)}\n`;
+  result += `총액 ${usd(totalAmount())}\n`;
   result += `적립 포인트: ${totalVolumeCredits()}점\n`;
   return result;
 }
