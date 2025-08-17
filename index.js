@@ -42,7 +42,7 @@ function statement(invoice, plays) {
     return result;
   }
 
-  function format(number) {
+  function usd(number) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -55,13 +55,13 @@ function statement(invoice, plays) {
     const play = playFor(performance);
     volumeCredits += volumeCreditsFor(performance);
 
-    result += ` ${play.name}: ${format(thisAmount / 100)} (${
+    result += ` ${play.name}: ${usd(thisAmount / 100)} (${
       performance.audience
     }석)\n`;
     totalAmount += thisAmount;
   }
 
-  result += `총액 ${format(totalAmount / 100)}\n`;
+  result += `총액 ${usd(totalAmount / 100)}\n`;
   result += `적립 포인트: ${volumeCredits}점\n`;
   return result;
 }
